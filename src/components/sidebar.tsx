@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import {
   LayoutDashboard,
@@ -11,11 +12,14 @@ import {
   Moon,
   Sun,
   LogOut,
+  CalendarClock,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Calendar, label: "Calendar", href: "/calendar/month" },
+  { icon: CalendarClock, label: "Routine", href: "/routine" },
   { icon: CheckCircle2, label: "Tasks", href: "/tasks" },
   { icon: BookOpen, label: "Notebooks", href: "/notebooks" },
 ];
@@ -29,6 +33,15 @@ function isActive(href: string, pathname: string) {
 export function Sidebar() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   return (
     <aside className="flex h-screen w-60 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
@@ -73,10 +86,13 @@ export function Sidebar() {
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors"
         >
-          {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-          {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          {mounted && (theme === "dark" ? <Sun size={18} /> : <Moon size={18} />)}
+          {mounted && (theme === "dark" ? "Light Mode" : "Dark Mode")}
         </button>
-        <button className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+        >
           <LogOut size={18} />
           Log Out
         </button>
