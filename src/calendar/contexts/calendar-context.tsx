@@ -16,6 +16,7 @@ interface ICalendarContext {
   setBadgeVariant: (variant: TBadgeVariant) => void;
   users: IUser[];
   workingHours: TWorkingHours;
+  setWorkingHours: (hours: TWorkingHours) => void;
   visibleHours: TVisibleHours;
   setVisibleHours: (hours: TVisibleHours) => void;
   events: IEvent[];
@@ -48,6 +49,7 @@ interface ICalendarProviderProps {
 
 export function CalendarProvider({ children, users, currentUser }: ICalendarProviderProps) {
   const { selectedDate, badgeVariant, setSelectedDate, setBadgeVariant } = useCalendarStore();
+  const [workingHours, setWorkingHours] = useState<TWorkingHours>(WORKING_HOURS);
   const [visibleHours, setVisibleHours] = useState<TVisibleHours>(VISIBLE_HOURS);
 
   const { events, isLoading, error, addEvent, updateEvent, deleteEvent } =
@@ -66,9 +68,10 @@ export function CalendarProvider({ children, users, currentUser }: ICalendarProv
       badgeVariant,
       setBadgeVariant,
       users,
+      workingHours,
+      setWorkingHours,
       visibleHours,
       setVisibleHours,
-      workingHours: WORKING_HOURS,
       events,
       isLoading,
       error,
@@ -83,6 +86,8 @@ export function CalendarProvider({ children, users, currentUser }: ICalendarProv
       badgeVariant,
       setBadgeVariant,
       users,
+      workingHours,
+      setWorkingHours,
       visibleHours,
       setVisibleHours,
       events,
