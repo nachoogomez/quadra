@@ -32,9 +32,11 @@ export function RoutineBlockCard({ block, style }: IProps) {
 
   return (
     <RoutineBlockDialog existingBlock={block}>
-      <div
+      <button
+        type="button"
+        aria-label={`Edit ${block.title} routine block`}
         className={cn(
-          "absolute inset-x-0.5 rounded-md border-l-[3px] cursor-pointer overflow-hidden transition-opacity hover:opacity-90 select-none",
+          "absolute inset-x-0.5 rounded-md border-l-[3px] overflow-hidden transition-opacity hover:opacity-90 select-none text-left w-[calc(100%-4px)]",
           colors.bg,
           colors.border
         )}
@@ -55,7 +57,7 @@ export function RoutineBlockCard({ block, style }: IProps) {
             </p>
           )}
         </div>
-      </div>
+      </button>
     </RoutineBlockDialog>
   );
 }

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Trash2 } from "lucide-react";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 
 import { useDisclosure } from "@/hooks/use-disclosure";
 import { useRoutine } from "@/routine/context";
@@ -119,22 +119,18 @@ export function RoutineBlockDialog({ children, defaultDay = 0, defaultHour = 9, 
     }
   }, [defaultDay, defaultHour, isEdit, form]);
 
-  const onSubmit = (values: TBlockFormData) => {
+  const onSubmit = async (values: TBlockFormData) => {
     if (isEdit && existingBlock) {
-      updateBlock({ ...existingBlock, ...values, dayOfWeek: values.dayOfWeek as TWeekDay });
+      await updateBlock({ ...existingBlock, ...values, dayOfWeek: values.dayOfWeek as TWeekDay });
     } else {
-      addBlock({
-        id: crypto.randomUUID(),
-        ...values,
-        dayOfWeek: values.dayOfWeek as TWeekDay,
-      });
+      await addBlock({ ...values, dayOfWeek: values.dayOfWeek as TWeekDay });
+      form.reset();
     }
     onClose();
-    if (!isEdit) form.reset();
   };
 
-  const handleDelete = () => {
-    if (existingBlock) deleteBlock(existingBlock.id);
+  const handleDelete = async () => {
+    if (existingBlock) await deleteBlock(existingBlock.id);
     onClose();
   };
 
@@ -261,7 +257,7 @@ export function RoutineBlockDialog({ children, defaultDay = 0, defaultHour = 9, 
                           <SelectContent>
                             {HOURS.map(h => (
                               <SelectItem key={h} value={String(h)}>
-                                {h === 0 ? "12" : h > 12 ? h - 12 : h}:00 {h >= 12 ? "PM" : "AM"}
+                                {String(h).padStart(2, "0")}:00
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -311,7 +307,7 @@ export function RoutineBlockDialog({ children, defaultDay = 0, defaultHour = 9, 
                           <SelectContent>
                             {HOURS.map(h => (
                               <SelectItem key={h} value={String(h)}>
-                                {h === 0 ? "12" : h > 12 ? h - 12 : h}:00 {h >= 12 ? "PM" : "AM"}
+                                {String(h).padStart(2, "0")}:00
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -350,9 +346,9 @@ export function RoutineBlockDialog({ children, defaultDay = 0, defaultHour = 9, 
 
         <DialogFooter className="flex-row items-center">
           {isEdit && (
-            <Button type="button" variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 mr-auto" onClick={handleDelete}>
-              <Trash2 size={16} />
-            </Button>
+            <div className="mr-auto">
+              <ConfirmDeleteButton variant="icon" onConfirm={handleDelete} className="opacity-100" />
+            </div>
           )}
           <DialogClose asChild>
             <Button type="button" variant="outline">

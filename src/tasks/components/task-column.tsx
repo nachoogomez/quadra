@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, MoreHorizontal } from "lucide-react";
+import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ITask, TColumn } from "../types";
@@ -63,8 +64,10 @@ export function TaskColumn({
   onDelete,
   isOver,
 }: TaskColumnProps) {
+  const { setNodeRef } = useDroppable({ id: column.id });
+
   return (
-    <div className="flex w-72 shrink-0 flex-col gap-3">
+    <div className="flex w-full md:w-72 md:shrink-0 flex-col gap-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -76,12 +79,13 @@ export function TaskColumn({
         <div className="flex items-center gap-1">
           <button
             onClick={() => onAddTask(column.id)}
+            aria-label={`Add task to ${column.title}`}
             className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
           >
-            <Plus size={16} />
+            <Plus size={16} aria-hidden="true" />
           </button>
-          <button className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
-            <MoreHorizontal size={16} />
+          <button aria-label={`${column.title} options`} className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
+            <MoreHorizontal size={16} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -89,7 +93,8 @@ export function TaskColumn({
       {/* Drop zone */}
       <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
         <div
-          className={`flex flex-col gap-3 min-h-[60px] rounded-xl transition-colors ${
+          ref={setNodeRef}
+          className={`flex flex-col gap-3 min-h-[80px] rounded-xl p-1 transition-colors ${
             isOver ? "bg-accent/40 ring-1 ring-border" : ""
           }`}
         >

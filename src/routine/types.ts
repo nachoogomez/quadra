@@ -14,3 +14,20 @@ export interface IRoutineBlock {
   endHour: number;
   endMinute: number; // 0 or 30
 }
+
+// DB row shape (snake_case)
+export interface IRoutineBlockRow {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  location: string;
+  color: TRoutineColor;
+  day_of_week: number;
+  start_hour: number;
+  start_minute: number;
+  end_hour: number;
+  end_minute: number;
+  created_at: string;
+  updated_at: string;
+}

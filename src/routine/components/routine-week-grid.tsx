@@ -2,6 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useRoutine } from "@/routine/context";
 import { RoutineBlockDialog } from "./dialogs/routine-block-dialog";
 import { RoutineBlockCard } from "./routine-block-card";
@@ -54,15 +55,16 @@ function DayColumn({ dayIndex, blocks }: IDayColumnProps) {
         const minute = (i % 2) * 30;
         return (
           <RoutineBlockDialog key={i} defaultDay={dayIndex} defaultHour={hour}>
-            <div
-              className="absolute inset-x-0 cursor-pointer hover:bg-accent/40 transition-colors group"
+            <button
+              type="button"
+              aria-label={`Add block on ${FULL_DAY_LABELS[dayIndex]} at ${hour}:${minute === 0 ? "00" : "30"}`}
+              className="absolute inset-x-0 hover:bg-accent/40 transition-colors group"
               style={{ top: `${(i * HOUR_HEIGHT) / 2}px`, height: `${HOUR_HEIGHT / 2}px` }}
-              title={`Add on ${FULL_DAY_LABELS[dayIndex]} ${hour}:${minute === 0 ? "00" : "30"}`}
             >
               <div className="hidden group-hover:flex items-center justify-center h-full">
-                <Plus size={12} className="text-muted-foreground" />
+                <Plus size={12} className="text-muted-foreground" aria-hidden="true" />
               </div>
-            </div>
+            </button>
           </RoutineBlockDialog>
         );
       })}
@@ -75,8 +77,49 @@ function DayColumn({ dayIndex, blocks }: IDayColumnProps) {
   );
 }
 
+function RoutineGridSkeleton() {
+  const skeletonBlocks = [
+    { col: 0, top: 32, height: 96 },
+    { col: 1, top: 128, height: 64 },
+    { col: 2, top: 64, height: 128 },
+    { col: 3, top: 192, height: 64 },
+    { col: 4, top: 32, height: 96 },
+    { col: 5, top: 96, height: 64 },
+    { col: 6, top: 160, height: 96 },
+  ];
+  return (
+    <div className="flex flex-col flex-1 min-h-0">
+      <div className="flex border-b border-border shrink-0">
+        <div className="w-16 shrink-0" />
+        {DAY_LABELS.map((label, i) => (
+          <div key={i} className="flex-1 border-l border-border py-2 flex justify-center">
+            <Skeleton className="h-3 w-8" />
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-1 overflow-hidden">
+        <div className="w-16 shrink-0 border-r border-border space-y-4 p-2 pt-4">
+          {[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-3 w-10 mx-auto" />)}
+        </div>
+        <div className="flex flex-1">
+          {skeletonBlocks.map(({ col, top, height }) => (
+            <div key={col} className="flex-1 border-l border-border relative">
+              <Skeleton
+                className="absolute inset-x-1 rounded-lg"
+                style={{ top: `${top}px`, height: `${height}px` }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function RoutineWeekGrid() {
-  const { blocks } = useRoutine();
+  const { blocks, isLoading } = useRoutine();
+
+  if (isLoading) return <RoutineGridSkeleton />;
 
   return (
     <div className="flex flex-col flex-1 min-h-0">

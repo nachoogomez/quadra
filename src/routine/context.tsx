@@ -1,35 +1,30 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
+import { useRoutineBlocks } from "./hooks/use-routine-blocks";
 import type { IRoutineBlock } from "./types";
-import { ROUTINE_BLOCKS_MOCK } from "./mocks";
 
 interface IRoutineContext {
   blocks: IRoutineBlock[];
-  addBlock: (block: IRoutineBlock) => void;
-  updateBlock: (block: IRoutineBlock) => void;
-  deleteBlock: (id: string) => void;
+  isLoading: boolean;
+  error: string | null;
+  addBlock: (block: Omit<IRoutineBlock, "id">) => Promise<void>;
+  updateBlock: (block: IRoutineBlock) => Promise<void>;
+  deleteBlock: (id: string) => Promise<void>;
 }
 
 const RoutineContext = createContext<IRoutineContext | null>(null);
 
-export function RoutineProvider({ children }: { children: React.ReactNode }) {
-  const [blocks, setBlocks] = useState<IRoutineBlock[]>(ROUTINE_BLOCKS_MOCK);
+interface IProps {
+  children: React.ReactNode;
+  userId: string;
+}
 
-  const addBlock = (block: IRoutineBlock) => {
-    setBlocks(prev => [...prev, block]);
-  };
-
-  const updateBlock = (updated: IRoutineBlock) => {
-    setBlocks(prev => prev.map(b => (b.id === updated.id ? updated : b)));
-  };
-
-  const deleteBlock = (id: string) => {
-    setBlocks(prev => prev.filter(b => b.id !== id));
-  };
+export function RoutineProvider({ children, userId }: IProps) {
+  const { blocks, isLoading, error, addBlock, updateBlock, deleteBlock } = useRoutineBlocks(userId);
 
   return (
-    <RoutineContext.Provider value={{ blocks, addBlock, updateBlock, deleteBlock }}>
+    <RoutineContext.Provider value={{ blocks, isLoading, error, addBlock, updateBlock, deleteBlock }}>
       {children}
     </RoutineContext.Provider>
   );

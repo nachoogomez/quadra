@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { isSameDay, parseISO } from "date-fns";
 
 import { useCalendar } from "@/calendar/contexts/calendar-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { DndProviderWrapper } from "@/calendar/components/dnd/dnd-provider";
 import { CalendarHeader } from "@/calendar/components/header/calendar-header";
@@ -31,8 +32,47 @@ interface IProps {
   view: TCalendarView;
 }
 
+function CalendarSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-xl border">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-8 w-8 rounded-md" />
+        </div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-20 rounded-md" />
+          <Skeleton className="h-8 w-28 rounded-md" />
+        </div>
+      </div>
+      {/* Day labels */}
+      <div className="grid grid-cols-7 border-b border-border">
+        {[0, 1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} className="py-2 flex justify-center border-r border-border last:border-0">
+            <Skeleton className="h-3 w-8" />
+          </div>
+        ))}
+      </div>
+      {/* Grid cells */}
+      {[0, 1, 2, 3, 4].map(row => (
+        <div key={row} className="grid grid-cols-7 border-b border-border last:border-0">
+          {[0, 1, 2, 3, 4, 5, 6].map(col => (
+            <div key={col} className="h-28 p-2 border-r border-border last:border-0 space-y-1.5">
+              <Skeleton className="h-5 w-5 rounded-full" />
+              {(row + col) % 3 === 0 && <Skeleton className="h-5 w-full rounded-md" />}
+              {(row + col) % 5 === 0 && <Skeleton className="h-5 w-3/4 rounded-md" />}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ClientContainer({ view }: IProps) {
-  const { selectedDate, selectedUserId, events } = useCalendar();
+  const { selectedDate, selectedUserId, events, isLoading } = useCalendar();
 
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
@@ -78,6 +118,8 @@ export function ClientContainer({ view }: IProps) {
         const isUserMatch = event.user.id === selectedUserId;
         return isInSelectedDay && isUserMatch;
       }
+
+      return false;
     });
   }, [selectedDate, selectedUserId, events, view]);
 
@@ -102,6 +144,8 @@ export function ClientContainer({ view }: IProps) {
   const eventStartDates = useMemo(() => {
     return filteredEvents.map(event => ({ ...event, endDate: event.startDate }));
   }, [filteredEvents]);
+
+  if (isLoading) return <CalendarSkeleton />;
 
   return (
     <div className="overflow-hidden rounded-xl border">

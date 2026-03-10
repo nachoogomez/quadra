@@ -6,9 +6,13 @@ import { RoutineProvider } from "@/routine/context";
 import { RoutineWeekGrid } from "./routine-week-grid";
 import { RoutineBlockDialog } from "./dialogs/routine-block-dialog";
 
-export function RoutineView() {
+interface IProps {
+  userId: string;
+}
+
+export function RoutineView({ userId }: IProps) {
   return (
-    <RoutineProvider>
+    <RoutineProvider userId={userId}>
       <div className="flex flex-col gap-4 p-6 h-full">
         <div className="flex items-center justify-between shrink-0">
           <div>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Plus } from "lucide-react";
 import type { INotebook } from "../types";
 
@@ -6,9 +7,10 @@ export function NotebooksWidget({ notebooks }: { notebooks: INotebook[] }) {
     <div>
       <h2 className="mb-3 text-base font-semibold text-foreground">Jump Back In</h2>
       <div className="grid grid-cols-2 gap-3">
-        {notebooks.map(nb => (
-          <button
-            key={nb.title}
+        {notebooks.map((nb, i) => (
+          <Link
+            key={`${nb.id}-${i}`}
+            href={`/notebooks?notebook=${nb.id}`}
             className="group relative flex flex-col justify-end overflow-hidden rounded-xl bg-card border border-border p-4 text-left h-36 transition-colors hover:bg-accent"
           >
             <span className="absolute right-3 top-3 text-4xl opacity-20 select-none group-hover:opacity-30 transition-opacity">
@@ -21,15 +23,18 @@ export function NotebooksWidget({ notebooks }: { notebooks: INotebook[] }) {
                 Edited {nb.edited}
               </p>
             </div>
-          </button>
+          </Link>
         ))}
 
-        <button className="flex h-36 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-muted-foreground transition-colors hover:border-muted-foreground hover:text-foreground">
+        <Link
+          href="/notebooks"
+          className="flex h-36 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-muted-foreground transition-colors hover:border-muted-foreground hover:text-foreground"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-current">
             <Plus size={16} />
           </div>
           <span className="text-sm">New Page</span>
-        </button>
+        </Link>
       </div>
     </div>
   );

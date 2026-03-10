@@ -18,7 +18,7 @@ export function NotesGrid({ notebook, notes, onBack, onOpenNote, onDeleteNote, o
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header / breadcrumb */}
-      <div className="flex items-center justify-between border-b border-border px-8 py-3">
+      <div className="flex items-center justify-between border-b border-border px-4 md:px-8 py-3">
         <nav className="flex items-center gap-1 text-sm text-muted-foreground">
           <button onClick={onBack} className="hover:text-foreground transition-colors">
             Notebooks
@@ -34,7 +34,7 @@ export function NotesGrid({ notebook, notes, onBack, onOpenNote, onDeleteNote, o
         </Button>
       </div>
 
-      <div className="flex-1 overflow-auto px-8 py-6">
+      <div className="flex-1 overflow-auto px-4 md:px-8 py-6">
         {notebookNotes.length > 0 ? (
           <>
             <div className="flex items-center gap-2 mb-4">

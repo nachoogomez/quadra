@@ -11,7 +11,7 @@ export function ScheduleWidget({ items }: { items: IScheduleItem[] }) {
           Upcoming Schedule
         </div>
         <Link
-          href="/calendar/month"
+          href="/routine"
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           View Calendar
@@ -20,14 +20,18 @@ export function ScheduleWidget({ items }: { items: IScheduleItem[] }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        {items.map(item => (
-          <div key={item.title} className="flex items-start gap-3">
+        {items.map((item, i) => (
+          <div key={`${item.title}-${i}`} className="flex items-start gap-3">
             <span className="w-16 shrink-0 pt-3 text-right text-xs text-muted-foreground/60">
               {item.time}
             </span>
             <div className={`w-0.5 self-stretch rounded-full ${item.color}`} />
-            <div className={`flex-1 rounded-lg p-3 ${item.muted ? "opacity-30" : "bg-muted/50"}`}>
-              <p className="text-sm font-medium text-foreground">{item.title}</p>
+            <div
+              className={`flex-1 rounded-lg p-3 ${item.muted ? "opacity-30" : "bg-muted/50"}`}
+            >
+              <p className="text-sm font-medium text-foreground">
+                {item.title}
+              </p>
               <p className="text-xs text-muted-foreground">{item.subtitle}</p>
               {item.avatars.length > 0 && (
                 <div className="mt-2 flex gap-1">

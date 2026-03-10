@@ -8,6 +8,7 @@ export interface IScheduleItem {
 }
 
 export interface INotebook {
+  id: string;
   icon: string;
   title: string;
   description: string;
@@ -15,7 +16,7 @@ export interface INotebook {
 }
 
 export interface ITodo {
-  id: number;
+  id: string;
   label: string;
   done: boolean;
 }

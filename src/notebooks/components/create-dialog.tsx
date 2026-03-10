@@ -16,8 +16,8 @@ interface CreateDialogProps {
   mode: TMode;
   defaultNotebookId?: string | null;
   onClose: () => void;
-  onCreateNotebook: (notebook: INotebook) => void;
-  onCreateNote: (note: INote) => void;
+  onCreateNotebook: (notebook: Omit<INotebook, "id" | "createdAt" | "editedAt">) => Promise<void>;
+  onCreateNote: (note: Omit<INote, "id" | "createdAt" | "editedAt">) => Promise<void>;
 }
 
 const EMOJI_OPTIONS = ["📝", "📚", "🧬", "🎨", "📈", "💻", "🧠", "⚗️", "🌍", "🔬", "📐", "🎯", "🌱", "💡", "🔖"];
@@ -33,28 +33,17 @@ export function CreateDialog({
 
   const handleClose = () => { reset(); onClose(); };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!title.trim()) return;
-    const now = new Date().toISOString().split("T")[0];
 
     if (mode === "notebook") {
-      onCreateNotebook({
-        id: crypto.randomUUID(),
-        title: title.trim(),
-        icon,
-        color,
-        createdAt: now,
-        editedAt: now,
-      });
+      await onCreateNotebook({ title: title.trim(), icon, color });
     } else {
-      onCreateNote({
-        id: crypto.randomUUID(),
+      await onCreateNote({
         notebookId: defaultNotebookId ?? null,
         title: title.trim(),
         content: JSON.stringify({ type: "doc", content: [{ type: "paragraph" }] }),
         color,
-        createdAt: now,
-        editedAt: now,
       });
     }
     reset();
@@ -77,7 +66,7 @@ export function CreateDialog({
               placeholder={mode === "notebook" ? "Notebook name…" : "Note title…"}
               value={title}
               onChange={e => setTitle(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleCreate()}
+              onKeyDown={e => { if (e.key === "Enter") handleCreate(); }}
             />
           </div>
 
@@ -88,7 +77,10 @@ export function CreateDialog({
                 {EMOJI_OPTIONS.map(e => (
                   <button
                     key={e}
+                    type="button"
                     onClick={() => setIcon(e)}
+                    aria-label={`Use ${e} as icon`}
+                    aria-pressed={icon === e}
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-md border text-base transition-colors",
                       icon === e ? "border-primary bg-primary/10" : "border-border hover:border-muted-foreground"
@@ -107,8 +99,10 @@ export function CreateDialog({
               {ALL_COLORS.map(c => (
                 <button
                   key={c}
+                  type="button"
                   onClick={() => setColor(c)}
-                  title={c}
+                  aria-label={`Select ${c} color`}
+                  aria-pressed={color === c}
                   className={cn(
                     "h-6 w-6 rounded-full border-2 transition-transform",
                     NOTE_COLOR_CLASSES[c].dot,

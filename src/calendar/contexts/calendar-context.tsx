@@ -1,8 +1,10 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useCallback } from "react";
 
-import type { Dispatch, SetStateAction } from "react";
+import { useCalendarEvents } from "@/calendar/hooks/use-calendar-events";
+import { useCalendarStore } from "@/lib/stores/calendar-store";
+
 import type { IEvent, IUser } from "@/calendar/interfaces";
 import type { TBadgeVariant, TVisibleHours, TWorkingHours } from "@/calendar/types";
 
@@ -14,16 +16,18 @@ interface ICalendarContext {
   setBadgeVariant: (variant: TBadgeVariant) => void;
   users: IUser[];
   workingHours: TWorkingHours;
-  setWorkingHours: Dispatch<SetStateAction<TWorkingHours>>;
   visibleHours: TVisibleHours;
-  setVisibleHours: Dispatch<SetStateAction<TVisibleHours>>;
   events: IEvent[];
-  setLocalEvents: Dispatch<SetStateAction<IEvent[]>>;
+  isLoading: boolean;
+  error: string | null;
+  addEvent: (event: Omit<IEvent, "id" | "user">) => Promise<void>;
+  updateEvent: (event: IEvent) => Promise<void>;
+  deleteEvent: (id: number) => Promise<void>;
 }
 
-const CalendarContext = createContext({} as ICalendarContext);
+const CalendarContext = createContext<ICalendarContext | null>(null);
 
-const WORKING_HOURS = {
+const WORKING_HOURS: TWorkingHours = {
   0: { from: 0, to: 0 },
   1: { from: 8, to: 17 },
   2: { from: 8, to: 17 },
@@ -33,44 +37,60 @@ const WORKING_HOURS = {
   6: { from: 8, to: 12 },
 };
 
-const VISIBLE_HOURS = { from: 7, to: 18 };
+const VISIBLE_HOURS: TVisibleHours = { from: 7, to: 18 };
 
 interface ICalendarProviderProps {
   children: React.ReactNode;
   users: IUser[];
-  events: IEvent[];
-  currentUserId: IUser["id"];
+  currentUser: IUser;
 }
 
-export function CalendarProvider({ children, users, events, currentUserId }: ICalendarProviderProps) {
-  const [badgeVariant, setBadgeVariant] = useState<TBadgeVariant>("colored");
-  const [visibleHours, setVisibleHours] = useState<TVisibleHours>(VISIBLE_HOURS);
-  const [workingHours, setWorkingHours] = useState<TWorkingHours>(WORKING_HOURS);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [localEvents, setLocalEvents] = useState<IEvent[]>(events);
+export function CalendarProvider({ children, users, currentUser }: ICalendarProviderProps) {
+  const { selectedDate, badgeVariant, setSelectedDate, setBadgeVariant } = useCalendarStore();
 
-  const handleSelectDate = (date: Date | undefined) => {
+  const { events, isLoading, error, addEvent, updateEvent, deleteEvent } =
+    useCalendarEvents(currentUser);
+
+  const handleSelectDate = useCallback((date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
-  };
+  }, [setSelectedDate]);
+
+  const value = useMemo(
+    () => ({
+      selectedDate,
+      setSelectedDate: handleSelectDate,
+      selectedUserId: currentUser.id,
+      badgeVariant,
+      setBadgeVariant,
+      users,
+      visibleHours: VISIBLE_HOURS,
+      workingHours: WORKING_HOURS,
+      events,
+      isLoading,
+      error,
+      addEvent,
+      updateEvent,
+      deleteEvent,
+    }),
+    [
+      selectedDate,
+      handleSelectDate,
+      currentUser.id,
+      badgeVariant,
+      setBadgeVariant,
+      users,
+      events,
+      isLoading,
+      error,
+      addEvent,
+      updateEvent,
+      deleteEvent,
+    ]
+  );
 
   return (
-    <CalendarContext.Provider
-      value={{
-        selectedDate,
-        setSelectedDate: handleSelectDate,
-        selectedUserId: currentUserId,
-        badgeVariant,
-        setBadgeVariant,
-        users,
-        visibleHours,
-        setVisibleHours,
-        workingHours,
-        setWorkingHours,
-        events: localEvents,
-        setLocalEvents,
-      }}
-    >
+    <CalendarContext.Provider value={value}>
       {children}
     </CalendarContext.Provider>
   );

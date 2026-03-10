@@ -10,19 +10,20 @@ interface NotebooksGridProps {
   onOpenNotebook: (notebook: INotebook) => void;
   onOpenNote: (note: INote) => void;
   onDeleteNote: (id: string) => void;
+  onDeleteNotebook: (id: string) => void;
   onNewNotebook: () => void;
   onNewNote: () => void;
 }
 
 export function NotebooksGrid({
-  notebooks, notes, onOpenNotebook, onOpenNote, onDeleteNote, onNewNotebook, onNewNote,
+  notebooks, notes, onOpenNotebook, onOpenNote, onDeleteNote, onDeleteNotebook, onNewNotebook, onNewNote,
 }: NotebooksGridProps) {
   const standaloneNotes = notes.filter(n => n.notebookId === null);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-8 py-3">
+      <div className="flex items-center justify-between border-b border-border px-4 md:px-8 py-3">
         <nav className="flex items-center gap-1 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">Notebooks</span>
         </nav>
@@ -38,7 +39,7 @@ export function NotebooksGrid({
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto px-8 py-6 flex flex-col gap-8">
+      <div className="flex-1 overflow-auto px-4 md:px-8 py-6 flex flex-col gap-8">
         {/* Notebooks section */}
         {notebooks.length > 0 && (
           <section>
@@ -56,6 +57,7 @@ export function NotebooksGrid({
                   notebook={nb}
                   notes={notes}
                   onClick={() => onOpenNotebook(nb)}
+                  onDelete={() => onDeleteNotebook(nb.id)}
                 />
               ))}
               {/* New notebook placeholder */}

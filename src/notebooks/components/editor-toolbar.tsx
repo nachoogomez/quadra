@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import type { Editor } from "@tiptap/react";
 import {
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
-  List, ListOrdered, Quote, Minus, Undo, Redo,
+  List, ListOrdered, ListTodo, Quote, Minus, Undo, Redo,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -139,6 +139,13 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
       >
         <ListOrdered size={14} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Task list"
+        active={editor.isActive("taskList")}
+        onClick={() => editor.chain().focus().toggleTaskList().run()}
+      >
+        <ListTodo size={14} />
       </ToolbarButton>
       <ToolbarButton
         title="Blockquote"
