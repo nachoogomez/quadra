@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useCallback } from "react";
+import { createContext, useContext, useMemo, useCallback, useState } from "react";
 
 import { useCalendarEvents } from "@/calendar/hooks/use-calendar-events";
 import { useCalendarStore } from "@/lib/stores/calendar-store";
@@ -17,6 +17,7 @@ interface ICalendarContext {
   users: IUser[];
   workingHours: TWorkingHours;
   visibleHours: TVisibleHours;
+  setVisibleHours: (hours: TVisibleHours) => void;
   events: IEvent[];
   isLoading: boolean;
   error: string | null;
@@ -47,6 +48,7 @@ interface ICalendarProviderProps {
 
 export function CalendarProvider({ children, users, currentUser }: ICalendarProviderProps) {
   const { selectedDate, badgeVariant, setSelectedDate, setBadgeVariant } = useCalendarStore();
+  const [visibleHours, setVisibleHours] = useState<TVisibleHours>(VISIBLE_HOURS);
 
   const { events, isLoading, error, addEvent, updateEvent, deleteEvent } =
     useCalendarEvents(currentUser);
@@ -64,7 +66,8 @@ export function CalendarProvider({ children, users, currentUser }: ICalendarProv
       badgeVariant,
       setBadgeVariant,
       users,
-      visibleHours: VISIBLE_HOURS,
+      visibleHours,
+      setVisibleHours,
       workingHours: WORKING_HOURS,
       events,
       isLoading,
@@ -80,6 +83,8 @@ export function CalendarProvider({ children, users, currentUser }: ICalendarProv
       badgeVariant,
       setBadgeVariant,
       users,
+      visibleHours,
+      setVisibleHours,
       events,
       isLoading,
       error,
