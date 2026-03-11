@@ -22,7 +22,7 @@ interface ICalendarContext {
   events: IEvent[];
   isLoading: boolean;
   error: string | null;
-  addEvent: (event: Omit<IEvent, "id" | "user">) => Promise<void>;
+  addEvent: (event: Omit<IEvent, "id" | "user">) => Promise<IEvent>;
   updateEvent: (event: IEvent) => Promise<void>;
   deleteEvent: (id: number) => Promise<void>;
 }
