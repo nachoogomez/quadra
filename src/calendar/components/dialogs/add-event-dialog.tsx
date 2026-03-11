@@ -72,7 +72,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
       endTime: { hour: 10, minute: 0 },
       color: "blue",
     });
-  }, [startDate, startTime, form]);
+  }, [startDate, startTime?.hour, startTime?.minute, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onToggle}>
