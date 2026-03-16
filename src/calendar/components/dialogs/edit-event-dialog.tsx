@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useDisclosure } from "@/hooks/use-disclosure";
 import { useCalendar } from "@/calendar/contexts/calendar-context";
-import { useUpdateEvent } from "@/calendar/hooks/use-update-event";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,8 +30,7 @@ interface IProps {
 
 export function EditEventDialog({ children, event }: IProps) {
   const { isOpen, onClose, onToggle } = useDisclosure();
-  const { deleteEvent } = useCalendar();
-  const { updateEvent } = useUpdateEvent();
+  const { deleteEvent, updateEvent } = useCalendar();
 
   const startDate = parseISO(event.startDate);
   const endDate = parseISO(event.endDate);

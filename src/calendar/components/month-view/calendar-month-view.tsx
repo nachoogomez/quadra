@@ -18,7 +18,10 @@ const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
   const { selectedDate } = useCalendar();
 
-  const allEvents = [...multiDayEvents, ...singleDayEvents];
+  const allEvents = useMemo(
+    () => [...multiDayEvents, ...singleDayEvents],
+    [multiDayEvents, singleDayEvents]
+  );
 
   const cells = useMemo(() => getCalendarCells(selectedDate), [selectedDate]);
 

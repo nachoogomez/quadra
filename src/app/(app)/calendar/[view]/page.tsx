@@ -8,10 +8,6 @@ import type { IUser } from "@/calendar/interfaces";
 
 const VALID_VIEWS: TCalendarView[] = ["day", "week", "month", "year", "agenda"];
 
-export function generateStaticParams() {
-  return VALID_VIEWS.map(view => ({ view }));
-}
-
 interface PageProps {
   params: Promise<{ view: string }>;
 }
