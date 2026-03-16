@@ -8,7 +8,7 @@ interface IRoutineContext {
   blocks: IRoutineBlock[];
   isLoading: boolean;
   error: string | null;
-  addBlock: (block: Omit<IRoutineBlock, "id">) => Promise<void>;
+  addBlock: (block: Omit<IRoutineBlock, "id">) => Promise<IRoutineBlock>;
   updateBlock: (block: IRoutineBlock) => Promise<void>;
   deleteBlock: (id: string) => Promise<void>;
 }

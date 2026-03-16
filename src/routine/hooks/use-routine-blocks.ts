@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { queryKeys } from "@/lib/query/query-keys";
-import type { IRoutineBlock, IRoutineBlockRow, TRoutineColor } from "@/routine/types";
+import type { IRoutineBlock, IRoutineBlockRow, TRoutineColor, TWeekDay } from "@/routine/types";
 
 // ─── Mappers ──────────────────────────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ function rowToBlock(row: IRoutineBlockRow): IRoutineBlock {
     description: row.description,
     location: row.location,
     color: row.color,
-    dayOfWeek: row.day_of_week,
+    dayOfWeek: row.day_of_week as TWeekDay,
     startHour: row.start_hour,
     startMinute: row.start_minute,
     endHour: row.end_hour,
