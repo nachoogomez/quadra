@@ -2,6 +2,7 @@ import { getUser } from "@/lib/supabase/get-user";
 import { UserProvider } from "@/lib/stores/user-provider";
 import { QueryProvider } from "@/lib/query/query-provider";
 import { Sidebar } from "@/components/sidebar";
+import { redirect } from "next/navigation";
 
 export default async function AppLayout({
   children,
@@ -11,6 +12,8 @@ export default async function AppLayout({
   const {
     data: { user },
   } = await getUser();
+
+  if (!user) redirect("/login");
 
   return (
     <QueryProvider>
