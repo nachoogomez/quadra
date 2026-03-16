@@ -23,7 +23,7 @@ function rowToEvent(row: IEventRow, user: IUser): IEvent {
 function eventToRow(
   event: Pick<IEvent, "title" | "description" | "color" | "startDate" | "endDate">,
   userId: string
-): Omit<IEventRow, "id" | "created_at" | "updated_at"> {
+): Omit<IEventRow, "id" | "created_at" | "updated_at" | "reminder_sent_at"> {
   return {
     user_id: userId,
     title: event.title,
