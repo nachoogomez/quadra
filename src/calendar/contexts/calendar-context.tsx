@@ -39,7 +39,7 @@ const WORKING_HOURS: TWorkingHours = {
   6: { from: 8, to: 12 },
 };
 
-const VISIBLE_HOURS: TVisibleHours = { from: 7, to: 18 };
+const VISIBLE_HOURS: TVisibleHours = { from: 0, to: 24 };
 
 interface ICalendarProviderProps {
   children: React.ReactNode;
